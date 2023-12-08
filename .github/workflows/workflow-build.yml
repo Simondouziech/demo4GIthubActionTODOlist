@@ -39,7 +39,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Start Docker
-      run: docker-compose -f "docker-compose.yml" up --build
+      run: docker-compose -f "docker-compose.yml" up -d --build
     - name: Build with Maven
       run: mvn -B package
     - name : Stop Docker
