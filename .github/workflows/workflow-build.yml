@@ -6,6 +6,17 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
+
+   # services:
+   #   postgres:
+   #    image: postgres:12
+   #     env:
+   #       POSTGRES_USER: ${{ secrets.DATABASE_USER }}
+   #       POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+   #       POSTGRES_DB: ${{ secrets.DATABASE_NAME }}
+   #     ports:
+   #       - 5432:5432
+
 name: Java CI with Maven
 
 on:
@@ -19,16 +30,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: ${{ secrets.DATABASE_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DATABASE_NAME }}
-        ports:
-          - 5432:5432
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -37,5 +38,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Start Docker
+      run: docker-compose -f "docker-compose.yml" up --build
     - name: Build with Maven
       run: mvn -B package
+    - name : Stop Docker
+      if: always()
+      run: docker-compose down
